@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prisberegner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            border-top: 1px solid #ff8c42;
+            border-bottom: 1px solid #ff8c42;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .label {
+            color: #ff8c42;
+            font-size: 18px;
+            flex: 1;
+            text-align: right;
+            padding-right: 15px;
+        }
+        .value {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        input[type="number"], select {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: white;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #ff8c42;
+        }
+        .result {
+            color: white;
+            font-size: 18px;
+            margin-left: 10px;
+        }
+        .required {
+            color: white;
+            margin-left: 10px;
+            font-size: 20px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .total {
+            font-size: 22px;
+            text-align: right;
+            margin-top: 10px;
+        }
+        .grand-total {
+            font-size: 28px;
+            color: #ff8c42;
+            text-align: right;
+        }
+        .unit {
+            margin-left: 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prisberegner</h1>
+
+    <div class="section">
+        <div class="row">
+            <div class="label">Areal størrelse (m²)</div>
+            <div class="value">
+                <input type="number" id="areaSize" value="200" min="1">
+                <span class="required">*</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Grundpris (pr. m²)</div>
+            <div class="value">
+                <input type="number" id="basePrice" value="25" min="0" step="0.1">
+                <span class="required">*</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Fejning af fugesand?</div>
+            <div class="value">
+                <input type="checkbox" id="resanding" checked>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Forsegling?</div>
+            <div class="value">
+                <input type="checkbox" id="sealing" checked>
+            </div>
+        </div>
+    </div>
+
+    <div id="sandSection" class="section">
+        <div class="section-title">SAND</div>
+        <div class="row">
+            <div class="label">Pris på sand kr.</div>
+            <div class="value">
+                <input type="number" id="sandCost" value="60" min="0" step="0.01">
+                <span class="required">*</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Tillæg arbejdsløn (pr. m²) kr.</div>
+            <div class="value">
+                <input type="number" id="sandLabour" value="16" min="0" step="0.1">
+                <span class="required">*</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Poser påkrævet (25KG) ~ x</div>
+            <div class="value">
+                <span class="result" id="bagsRequired">12</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Samlet pris på sand kr.</div>
+            <div class="value">
+                <span class="result" id="totalSandCost">720</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Arbejdsløn sand kr.</div>
+            <div class="value">
+                <span class="result" id="sandLabourCost">3.200</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="sealingSection" class="section">
+        <div class="section-title">FORSEGLING</div>
+        <div class="row">
+            <div class="label">Pris på forsegler kr.</div>
+            <div class="value">
+                <input type="number" id="sealerCost" value="30" min="0" step="0.01">
+                <span class="unit">(pr. L)</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Forsegler dækning (pr. L)</div>
+            <div class="value">
+                <input type="number" id="sealerCoverage" value="5" min="1">
+                <span class="unit">(pr. m²)</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Forsegler lag påkrævet</div>
+            <div class="value">
+                <input type="number" id="sealerCoats" value="1" min="1">
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Tillæg arbejdsløn (pr. m²) kr.</div>
+            <div class="value">
+                <input type="number" id="sealLabour" value="16" min="0" step="0.1">
+                <span class="required">*</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Forsegler påkrævet (L) x</div>
+            <div class="value">
+                <span class="result" id="sealerRequired">40</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Samlet pris på forsegler kr.</div>
+            <div class="value">
+                <span class="result" id="totalSealerCost">1.200</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Arbejdsløn forsegling kr.</div>
+            <div class="value">
+                <span class="result" id="sealLabourCost">3.200</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="row">
+            <div class="label">Samlet materialer kr.</div>
+            <div class="value">
+                <span class="result" id="totalMaterials">1.920</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Samlet arbejdsløn kr.</div>
+            <div class="value">
+                <span class="result" id="totalLabour">11.400</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="row grand-total">
+            <div class="label">TOTAL kr.</div>
+            <div class="value">
+                <span class="result" id="grandTotal">13.320</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">(Samlet pris pr. m²) kr.</div>
+            <div class="value">
+                <span class="result" id="pricePerM2">66,6</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Beregn moms?</div>
+            <div class="value">
+                <input type="checkbox" id="calculateVAT" checked>
+            </div>
+        </div>
+        <div class="row" id="vatRow">
+            <div class="label">+ MOMS kr.</div>
+            <div class="value">
+                <span class="result" id="vatAmount">2.664</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vent til DOM er indlæst
+        window.onload = function() {
+            // Hent alle input elementer
+            const areaSize = document.getElementById('areaSize');
+            const basePrice = document.getElementById('basePrice');
+            const resanding = document.getElementById('resanding');
+            const sealing = document.getElementById('sealing');
+            const sandCost = document.getElementById('sandCost');
+            const sandLabour = document.getElementById('sandLabour');
+            const sealerCost = document.getElementById('sealerCost');
+            const sealerCoverage = document.getElementById('sealerCoverage');
+            const sealerCoats = document.getElementById('sealerCoats');
+            const sealLabour = document.getElementById('sealLabour');
+            const calculateVAT = document.getElementById('calculateVAT');
+            
+            // Hent alle resultat elementer
+            const bagsRequired = document.getElementById('bagsRequired');
+            const totalSandCost = document.getElementById('totalSandCost');
+            const sandLabourCost = document.getElementById('sandLabourCost');
+            const sealerRequired = document.getElementById('sealerRequired');
+            const totalSealerCost = document.getElementById('totalSealerCost');
+            const sealLabourCost = document.getElementById('sealLabourCost');
+            const totalMaterials = document.getElementById('totalMaterials');
+            const totalLabour = document.getElementById('totalLabour');
+            const grandTotal = document.getElementById('grandTotal');
+            const pricePerM2 = document.getElementById('pricePerM2');
+            const vatAmount = document.getElementById('vatAmount');
+            const sandSection = document.getElementById('sandSection');
+            const sealingSection = document.getElementById('sealingSection');
+            const vatRow = document.getElementById('vatRow');
+            
+            // Funktion til at formatere tal med tusindtalsseparator og komma
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".").replace('.', ',');
+            }
+            
+            // Funktion til at beregne alle værdier
+            function calculateAll() {
+                // Vis/skjul sektioner baseret på checkboxes
+                sandSection.style.display = resanding.checked ? 'block' : 'none';
+                sealingSection.style.display = sealing.checked ? 'block' : 'none';
+                vatRow.style.display = calculateVAT.checked ? 'flex' : 'none';
+                
+                const area = parseFloat(areaSize.value) || 0;
+                
+                // Beregn sand værdier
+                let sandTotal = 0;
+                let sandLabourTotal = 0;
+                
+                if (resanding.checked) {
+                    // Antag at hver pose dækker ca. 17 m²
+                    const bags = Math.ceil(area / 17);
+                    bagsRequired.textContent = bags;
+                    
+                    const sandPrice = parseFloat(sandCost.value) || 0;
+                    sandTotal = bags * sandPrice;
+                    totalSandCost.textContent = formatNumber(sandTotal.toFixed(0));
+                    
+                    const sandLabourPrice = parseFloat(sandLabour.value) || 0;
+                    sandLabourTotal = area * sandLabourPrice;
+                    sandLabourCost.textContent = formatNumber(sandLabourTotal.toFixed(0));
+                }
+                
+                // Beregn forsegler værdier
+                let sealerTotal = 0;
+                let sealLabourTotal = 0;
+                
+                if (sealing.checked) {
+                    const sealerCoverageValue = parseFloat(sealerCoverage.value) || 1;
+                    const coats = parseInt(sealerCoats.value) || 1;
+                    
+                    const litersNeeded = Math.ceil((area * coats) / sealerCoverageValue);
+                    sealerRequired.textContent = litersNeeded;
+                    
+                    const sealerPrice = parseFloat(sealerCost.value) || 0;
+                    sealerTotal = litersNeeded * sealerPrice;
+                    totalSealerCost.textContent = formatNumber(sealerTotal.toFixed(0));
+                    
+                    const sealLabourPrice = parseFloat(sealLabour.value) || 0;
+                    sealLabourTotal = area * sealLabourPrice;
+                    sealLabourCost.textContent = formatNumber(sealLabourTotal.toFixed(0));
+                }
+                
+                // Beregn totaler
+                const materialsTotal = sandTotal + sealerTotal;
+                totalMaterials.textContent = formatNumber(materialsTotal.toFixed(0));
+                
+                const basePriceTotal = area * (parseFloat(basePrice.value) || 0);
+                const labourTotal = basePriceTotal + sandLabourTotal + sealLabourTotal;
+                totalLabour.textContent = formatNumber(labourTotal.toFixed(0));
+                
+                const total = materialsTotal + labourTotal;
+                grandTotal.textContent = formatNumber(total.toFixed(0));
+                
+                const perM2 = total / area;
+                pricePerM2.textContent = formatNumber(perM2.toFixed(1));
+                
+                // Beregn moms
+                if (calculateVAT.checked) {
+                    const vat = total * 0.25; // 25% moms i Danmark
+                    vatAmount.textContent = formatNumber(vat.toFixed(0));
+                }
+            }
+            
+            // Tilføj event listeners til alle input elementer
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', calculateAll);
+                input.addEventListener('change', calculateAll);
+            });
+            
+            // Beregn ved indlæsning
+            calculateAll();
+        };
+    </script>
+</body>
+</html>
